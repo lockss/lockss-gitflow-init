@@ -17,7 +17,7 @@ The LOCKSS conventions for Git Flow are:
 # Installing
 
 Recommended setup for some installation directory `${INSTALLDIR}` (e.g.
-`${HOME}/software`:
+`${HOME}/software`):
 
 * Add `${HOME}/bin` to your `$PATH`.
 
