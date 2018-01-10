@@ -1,10 +1,12 @@
 `lockss-gitflow-init` is a simple shell script to initialize a Git repository
 so that it uses Git Flow with the naming conventions of the LOCKSS Team.
 
-It does **not** invoke `git flow init`, only equivalent calls to
-`git config --local`.
+It makes calls to `git config --local`, then calls
+`git flow init --local --defaults` to create branches. It determines whether
+`gitflow-avh` or similar is installed by calling `git flow version`.
 
-The LOCKSS conventions for Git Flow are:
+This repository uses, and this script implements, the LOCKSS conventions for Git
+Flow, which are:
 
 * The stable branch is `master`
 * The development branch is `develop`
