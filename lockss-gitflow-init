@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright (c) 2000-2017, Board of Trustees of Leland Stanford Jr. University
+# Copyright (c) 2000-2018, Board of Trustees of Leland Stanford Jr. University
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -29,33 +29,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 VERSION=1.2.0
+
 _0=$(basename "${0}")
+DEST="--global"
 
-case "${1}" in
+while true ; do
 
-  --help|-help|-h)
-    cat <<EOF
+  case "${1}" in
+
+    --help|-help|-h)
+      cat <<EOF
 
 ${_0} [OPTIONS]
 
-    --help, -h     Displays this message and exits
-    --version, -V  Displays version and exits
+    --help, -h     Display this message and exit
+    --version, -V  Display version and exit
+    --local, -l    Use local Git settings instead of global
 
 EOF
-    exit 0
-    ;;
+      exit 0
+      ;;
 
-  --version|-version|-V|-v)
-    echo "${_0} version ${VERSION}"
-    exit 0
-    ;;
+    --local|-local|-l)
+      DEST="--local"
+      shift
+      continue
+      ;;
 
-esac
+    --version|-version|-V|-v)
+      echo "${_0} version ${VERSION}"
+      exit 0
+      ;;
 
-if [ ! -d .git ]; then
-  echo "${_0}: ${PWD} does not appear to be a Git repository" >&2
-  exit 1
-fi
+  esac
+
+  break
+  
+done
+
+#if [ ! -d .git ]; then
+#  echo "${_0}: ${PWD} does not appear to be a Git repository" >&2
+#  exit 1
+#fi
 
 if ! git flow version &> /dev/null ; then
   echo "${_0}: gitflow-avh or similar does not seem to be installed" >&2
@@ -64,21 +79,20 @@ fi
 
 echo "Setting up permanent branches..."
 for k in master develop ; do
-  git config --local "gitflow.branch.${k}" "${k}"
+  git config $DEST "gitflow.branch.${k}" "${k}"
 done
 
-echo "Setting up branch prefixes..."
-for k in feature bugfix release hotfix support ; do
-  git config --local "gitflow.prefix.${k}" "${k}-"
+echo "Setting up branch prefixes and branch defaults..."
+for k in feature release hotfix support bugfix ; do
+  git config $DEST "gitflow.prefix.${k}" "${k}-"
+  git config $DEST "gitflow.${k}.finish.keep" 'true'
+  git config $DEST "gitflow.${k}.finish.squash" 'true'
 done
 
 echo "Setting up version tag prefix..."
-git config --local 'gitflow.prefix.versiontag' 'version-'
+git config $DEST 'gitflow.prefix.versiontag' 'version-'
 
-echo "Setting up hooks directory..."
-git config --local 'gitflow.path.hooks' "${PWD}/.git/hooks"
-
-echo "Calling git flow init..."
-git flow init --local --defaults
+#echo "Setting up hooks directory..."
+#git config --local 'gitflow.path.hooks' "${PWD}/.git/hooks"
 
 echo "Done."
