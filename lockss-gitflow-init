@@ -67,10 +67,12 @@ EOF
   
 done
 
-#if [ ! -d .git ]; then
-#  echo "${_0}: ${PWD} does not appear to be a Git repository" >&2
-#  exit 1
-#fi
+if [ "X${DEST}" = "X--local" ]; then
+  if [ ! -d .git -o ! -f .git/config ]; then
+    echo "${_0}: ${PWD} does not appear to be a Git repository" >&2
+    exit 1
+  fi
+fi
 
 if ! git flow version &> /dev/null ; then
   echo "${_0}: gitflow-avh or similar does not seem to be installed" >&2
