@@ -74,7 +74,7 @@ if [ "X${DEST}" = "X--local" ]; then
   fi
 fi
 
-if ! git flow version &> /dev/null ; then
+if ! git flow version >/dev/null 2>&1 ; then
   echo "${_0}: gitflow-avh or similar does not seem to be installed" >&2
   exit 1
 fi 
